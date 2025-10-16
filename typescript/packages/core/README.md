@@ -12,7 +12,8 @@ Microsoft's comprehensive TypeScript/JavaScript framework for building, orchestr
 - **🔧 Function/Tool Calling**: Easy integration of custom tools and functions
 - **🔄 Streaming Support**: Real-time streaming responses
 - **🎯 Middleware System**: Flexible request/response processing
-- **📊 OpenTelemetry Integration**: Built-in observability and tracing
+- **📊 OpenTelemetry Integration**: Built-in observability and tracing ✨ NEW
+- **🌊 Workflow Orchestration**: Multi-agent workflows with HandOff patterns ✨ NEW
 - **💪 TypeScript First**: Full TypeScript support with excellent type inference
 
 ## Installation
@@ -200,6 +201,107 @@ const customMiddleware: AgentMiddleware = async (context, next) => {
 agent.use(customMiddleware);
 ```
 
+### Workflows and HandOff Pattern ✨ NEW
+
+Create multi-agent workflows where agents hand off control to each other:
+
+```typescript
+import { createHandOffWorkflow } from '@microsoft/agent-framework';
+
+// Create specialized agents
+const writerAgent = client.createAgent({
+  name: 'writer',
+  instructions: 'You are an excellent content writer.',
+});
+
+const reviewerAgent = client.createAgent({
+  name: 'reviewer',
+  instructions: 'You review and provide feedback on content.',
+});
+
+const editorAgent = client.createAgent({
+  name: 'editor',
+  instructions: 'You polish content based on feedback.',
+});
+
+// Create a sequential HandOff workflow
+const workflow = createHandOffWorkflow([
+  writerAgent,
+  reviewerAgent,
+  editorAgent,
+]);
+
+// Run the workflow
+const result = await workflow.run('Create a product description');
+console.log('Outputs:', result.outputs);
+```
+
+Build custom workflows with conditional routing:
+
+```typescript
+import { WorkflowBuilder } from '@microsoft/agent-framework';
+
+const workflow = new WorkflowBuilder()
+  .setName('Customer Support')
+  .setStartExecutor('classifier')
+  .addExecutor('classifier', classifierAgent)
+  .addExecutor('technical', technicalAgent)
+  .addExecutor('billing', billingAgent)
+  // Route based on classification
+  .addEdge('classifier', 'technical', async (result) => {
+    return String(result).includes('technical');
+  })
+  .addEdge('classifier', 'billing', async (result) => {
+    return String(result).includes('billing');
+  })
+  .build();
+
+const result = await workflow.run('My app keeps crashing');
+```
+
+### OpenTelemetry Observability ✨ NEW
+
+Add comprehensive observability to your agents:
+
+```typescript
+import { useObservability, setupObservability } from '@microsoft/agent-framework';
+
+// Configure observability
+setupObservability({
+  enabled: true,
+  captureMessageContent: false, // Be careful with sensitive data
+});
+
+// Wrap your agent with observability
+const agent = client.createAgent({
+  name: 'ObservableAgent',
+  instructions: 'You are a helpful assistant.',
+});
+
+const observableAgent = useObservability(agent);
+
+// All agent calls now emit OpenTelemetry spans
+const response = await observableAgent.run('Hello!');
+```
+
+Create custom spans for application logic:
+
+```typescript
+import { getTracer, OtelAttr } from '@microsoft/agent-framework';
+
+const tracer = getTracer();
+
+await tracer.startActiveSpan('my_operation', async (span) => {
+  span.setAttribute('custom.attribute', 'value');
+  
+  // Agent call becomes a child span
+  const response = await observableAgent.run('Process this');
+  
+  span.setStatus({ code: SpanStatusCode.OK });
+  span.end();
+});
+```
+
 ## Examples
 
 See the [samples directory](../../samples/getting-started) for more examples:
@@ -207,6 +309,8 @@ See the [samples directory](../../samples/getting-started) for more examples:
 - Basic agent usage
 - Multi-turn conversations
 - Function calling
+- Workflows and HandOff patterns ✨
+- OpenTelemetry observability ✨
 - Streaming responses
 - Middleware
 - Custom storage

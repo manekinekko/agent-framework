@@ -68,3 +68,41 @@ export {
 export {
   AzureOpenAIChatClient,
 } from './azure-openai-client.js';
+
+// Observability (OpenTelemetry)
+export {
+  ObservableAIAgent,
+  withObservability,
+  useObservability,
+  setupObservability,
+  getObservabilityConfig,
+  getTracer,
+  OtelAttr,
+  type ObservabilityConfig,
+} from './observability.js';
+
+// Workflows
+export {
+  Workflow,
+  WorkflowBuilder,
+  createHandOffWorkflow,
+  WorkflowRunState,
+  type WorkflowEvent,
+  type WorkflowStartedEvent,
+  type WorkflowCompletedEvent,
+  type WorkflowFailedEvent,
+  type ExecutorInvokedEvent,
+  type ExecutorCompletedEvent,
+  type ExecutorFailedEvent,
+  type WorkflowOutputEvent,
+  type AgentRunEvent,
+  type WorkflowEventType,
+  type WorkflowContext,
+  type ExecutorFunction,
+  type AgentExecutorConfig,
+  type ExecutorConfig,
+  type EdgeCondition,
+  type EdgeConfig,
+  type WorkflowConfig,
+  type WorkflowRunResult,
+} from './workflow/index.js';

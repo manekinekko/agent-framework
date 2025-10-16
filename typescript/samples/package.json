@@ -9,11 +9,17 @@
     "02": "tsx getting-started/02-multiturn-conversation.ts",
     "03": "tsx getting-started/03-function-tools.ts",
     "04": "tsx getting-started/04-azure-openai.ts",
-    "05": "tsx getting-started/05-middleware.ts"
+    "05": "tsx getting-started/05-middleware.ts",
+    "06": "tsx getting-started/06-workflows-handoff.ts",
+    "07": "tsx getting-started/07-workflows-custom.ts",
+    "08": "tsx getting-started/08-observability.ts"
   },
   "dependencies": {
     "@azure/identity": "^4.6.0",
-    "@microsoft/agent-framework": "file:../packages/core"
+    "@microsoft/agent-framework": "file:../packages/core",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/sdk-trace-node": "^1.29.0",
+    "@opentelemetry/sdk-trace-base": "^1.29.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
