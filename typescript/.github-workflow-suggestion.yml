@@ -1,0 +1,98 @@
+# TypeScript SDK CI/CD Workflow (Suggested)
+#
+# This file provides a suggested GitHub Actions workflow for building, testing,
+# and publishing the TypeScript SDK. To enable it, copy this file to:
+# .github/workflows/typescript-sdk.yml
+
+name: TypeScript SDK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'typescript/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'typescript/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: typescript/packages/core/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./typescript/packages/core
+        run: npm ci
+      
+      - name: Lint
+        working-directory: ./typescript/packages/core
+        run: npm run lint
+      
+      - name: Type check
+        working-directory: ./typescript/packages/core
+        run: npm run typecheck
+      
+      - name: Build
+        working-directory: ./typescript/packages/core
+        run: npm run build
+      
+      - name: Run tests
+        working-directory: ./typescript/packages/core
+        run: npm test
+      
+      - name: Test coverage
+        working-directory: ./typescript/packages/core
+        run: npm run test:coverage
+        if: matrix.node-version == '20.x'
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: matrix.node-version == '20.x'
+        with:
+          file: ./typescript/packages/core/coverage/coverage-final.json
+          flags: typescript
+          name: typescript-coverage
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install dependencies
+        working-directory: ./typescript/packages/core
+        run: npm ci
+      
+      - name: Build
+        working-directory: ./typescript/packages/core
+        run: npm run build
+      
+      - name: Publish to npm
+        working-directory: ./typescript/packages/core
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # Only publish if version has changed
+        continue-on-error: true
