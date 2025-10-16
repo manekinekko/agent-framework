@@ -6,8 +6,9 @@
 [![MS Learn Documentation](https://img.shields.io/badge/MS%20Learn-Documentation-blue)](https://learn.microsoft.com/en-us/agent-framework/)
 [![PyPI](https://img.shields.io/pypi/v/agent-framework)](https://pypi.org/project/agent-framework/)
 [![NuGet](https://img.shields.io/nuget/v/Microsoft.Agents.AI)](https://www.nuget.org/profiles/MicrosoftAgentFramework/)
+[![npm](https://img.shields.io/npm/v/@microsoft/agent-framework)](https://www.npmjs.com/package/@microsoft/agent-framework)
 
-Welcome to Microsoft's comprehensive multi-language framework for building, orchestrating, and deploying AI agents with support for both .NET and Python implementations. This framework provides everything from simple chat agents to complex multi-agent workflows with graph-based orchestration.
+Welcome to Microsoft's comprehensive multi-language framework for building, orchestrating, and deploying AI agents with support for .NET, Python, and TypeScript/JavaScript implementations. This framework provides everything from simple chat agents to complex multi-agent workflows with graph-based orchestration.
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=AAgdMhftj8w" title="Watch the full Agent Framework introduction (30 min)">
@@ -25,7 +26,7 @@ Welcome to Microsoft's comprehensive multi-language framework for building, orch
 
 ### 📦 Installation
 
-Python
+**Python**
 
 ```bash
 pip install agent-framework --pre
@@ -33,10 +34,16 @@ pip install agent-framework --pre
 # It may take a minute on first install on Windows.
 ```
 
-.NET
+**.NET**
 
 ```bash
 dotnet add package Microsoft.Agents.AI
+```
+
+**TypeScript/JavaScript**
+
+```bash
+npm install @microsoft/agent-framework
 ```
 
 ### 📚 Documentation
@@ -70,6 +77,8 @@ dotnet add package Microsoft.Agents.AI
 
 - **Python and C#/.NET Support**: Full framework support for both Python and C#/.NET implementations with consistent APIs
   - [Python packages](./python/packages/) | [.NET source](./dotnet/src/)
+- **TypeScript/JavaScript Support**: Idiomatic TypeScript/JavaScript SDK for building AI agents
+  - [TypeScript package](./typescript/packages/core/)
 - **Observability**: Built-in OpenTelemetry integration for distributed tracing, monitoring, and debugging
   - [Python observability](./python/samples/getting_started/observability/) | [.NET telemetry](./dotnet/samples/GettingStarted/AgentOpenTelemetry/)
 - **Multiple Agent Provider Support**: Support for various LLM providers with more being added continuously
@@ -153,6 +162,25 @@ var agent = new OpenAIClient(
 Console.WriteLine(await agent.RunAsync("Write a haiku about Microsoft Agent Framework."));
 ```
 
+### Basic Agent - TypeScript
+
+```typescript
+// npm install @microsoft/agent-framework
+import { OpenAIChatClient } from '@microsoft/agent-framework';
+
+const client = new OpenAIChatClient({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const agent = client.createAgent({
+  name: 'HaikuBot',
+  instructions: 'You are an upbeat assistant that writes beautifully.',
+});
+
+const response = await agent.run('Write a haiku about Microsoft Agent Framework.');
+console.log(response.text);
+```
+
 ## More Examples & Samples
 
 ### Python
@@ -166,6 +194,10 @@ Console.WriteLine(await agent.RunAsync("Write a haiku about Microsoft Agent Fram
 - [Getting Started with Agents](./dotnet/samples/GettingStarted/Agents): basic agent creation and tool usage
 - [Agent Provider Samples](./dotnet/samples/GettingStarted/AgentProviders): samples showing different agent providers
 - [Workflow Samples](./dotnet/samples/GettingStarted/Workflows): advanced multi-agent patterns and workflow orchestration
+
+### TypeScript/JavaScript
+
+- [Getting Started Samples](./typescript/samples/getting-started/): basic agent usage, multi-turn conversations, function tools, and more
 
 ## Contributor Resources
 
